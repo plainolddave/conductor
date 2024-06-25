@@ -8,6 +8,7 @@ Conductor server with support for the following backend:
 2. Postgres
 3. Mysql
 4. Cassandra
+5. MongoDb
 
 ### Docker File for Server and UI
 
@@ -29,7 +30,7 @@ Refer to the table below for various supported backend and required configuratio
 > | redis      | conductor.db.type=redis_standalone |
 > | mysql      | conductor.db.type=mysql            |
 > | cassandra  | conductor.db.type=cassandra        |    
->
+> | mongo      | conductor.db.type=mongo            |  
 
 Conductor using Elasticsearch for indexing the workflow data.  
 Currently, Elasticsearch 6 and 7 are supported.
@@ -48,4 +49,5 @@ TODO: Link to the helm charts
 |--------------------------------------------------------------|----------------------------|
 | [docker-compose.yaml](docker-compose.yaml)                   | Redis + Elasticsearch 7    |
 | [docker-compose-postgres.yaml](docker-compose-postgres.yaml) | Postgres + Elasticsearch 7 |
-| [docker-compose-mysql.yaml](docker-compose-mysql.yaml)    | Mysql + Elasticsearch 7    |
+| [docker-compose-mysql.yaml](docker-compose-mysql.yaml)       | Mysql + Elasticsearch 7    |
+| [docker-compose-mongo.yaml](docker-compose-mongo.yaml)       | MongoDB + Elasticsearch 7  |

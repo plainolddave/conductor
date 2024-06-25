@@ -8,6 +8,7 @@ dependencies {
     testImplementation project(':conductor-redis-persistence')
     testImplementation project(':conductor-cassandra-persistence')
     testImplementation project(':conductor-es7-persistence')
+    testImplementation project(':conductor-mongo-persistence')
     testImplementation project(':conductor-grpc-server')
     testImplementation project(':conductor-client')
     testImplementation project(':conductor-grpc-client')
@@ -36,6 +37,7 @@ dependencies {
     testImplementation "org.elasticsearch.client:elasticsearch-rest-high-level-client:${revElasticSearch7}"
 
     testImplementation "org.testcontainers:elasticsearch:${revTestContainer}"
+    testImplementation "org.testcontainers:mongodb:${revTestContainer}"
     testImplementation('junit:junit:4.13.2')
     testImplementation "org.junit.vintage:junit-vintage-engine"
     testImplementation "javax.ws.rs:javax.ws.rs-api:${revJAXRS}"

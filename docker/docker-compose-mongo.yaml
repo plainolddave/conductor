@@ -1,0 +1,94 @@
+# docker-compose -f docker/docker-compose-mongo.yaml up
+## Run the above command from conductor root directory
+
+version: '2.3'
+
+services:
+  conductor-server:
+    environment:
+      - CONFIG_PROP=config-mongo.properties
+    image: conductor:server
+    container_name: conductor-server
+    build:
+      context: ../
+      dockerfile: docker/server/Dockerfile
+    networks:
+      - internal
+    ports:
+      - 8080:8080
+      - 5000:5000
+    healthcheck:
+      test: ["CMD", "curl","-I" ,"-XGET", "http://localhost:8080/health"]
+      interval: 60s
+      timeout: 30s
+      retries: 12
+    links:
+      - conductor-elasticsearch:es
+      - conductor-mongo:mongo
+    depends_on:
+      conductor-elasticsearch:
+        condition: service_healthy
+      conductor-mongo:
+        condition: service_healthy
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1k"
+        max-file: "3"
+
+  conductor-mongo:
+    image: mongo:latest
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=conductor
+      - MONGO_INITDB_ROOT_PASSWORD=conductor
+      - MONGO_INITDB_DATABASE=conductor
+    volumes:
+      - type: volume
+        source: mongodata-conductor
+        target: /data/db
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongo localhost:27017/conductor --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    networks:
+      - internal
+    ports:
+      - 27017:27017
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1k"
+        max-file: "3"
+
+  conductor-elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.11
+    environment:
+      - "ES_JAVA_OPTS=-Xms512m -Xmx1024m"
+      - xpack.security.enabled=false
+      - discovery.type=single-node
+    volumes:
+      - esdata-conductor:/usr/share/elasticsearch/data
+    networks:
+      - internal
+    ports:
+      - 9201:9200
+    healthcheck:
+      test: curl http://localhost:9200/_cluster/health -o /dev/null
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1k"
+        max-file: "3"
+
+volumes:
+  mongodata-conductor:
+    driver: local
+  esdata-conductor:
+    driver: local
+
+networks:
+  internal:
